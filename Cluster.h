@@ -34,6 +34,7 @@ namespace Clustering {
         bool __in(const Point &p) const;
 
         // inner class has private access
+        //in here and private because this centriod is particular to THIS cluster
         class Centroid {
             unsigned int __dimensions;
             Point __p;
@@ -58,6 +59,10 @@ namespace Clustering {
             bool equal(const Point &) const;
             void toInfinity();
         };
+
+        //NOTES ON THIS
+        //if nested class is in public section you can have objecst of the nested class declated with the scope opperator of the parent class
+        //if it is declared in the private section, it cannot be declared with the scope operator
 
     public:
         static const char POINT_CLUSTER_ID_DELIM;
