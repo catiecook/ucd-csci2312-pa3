@@ -4,28 +4,16 @@
 #include "Cluster.h"
 
 
+using namespace std;
 
 namespace Clustering {
 
 // ~~~~~~~~~~~~ OutOfBoundsEx ~~~~~~~~~~~~~
     OutOfBoundsEx::OutOfBoundsEx(unsigned int c, int r)
     {
-
-        c = __current;
-        r = __rhs;
-
-    //example of this from point implimentation
-//        Point::Point(unsigned int i)
-//          __id = __idGen;
-//        ++__idGen; // increment IDs  as they are created
-//
-//        __dim = i;
-//        __values = new double[__dim]; //array of doubles for ids
-//
-//        for (int j = 0; j < __dim; ++j)
-//        {
-//            __values[j] = 0;
-//        }
+        this->__name = "OutOfBoundsEx";
+        this->__current = c;
+        this->__rhs = r;
 
     }
 
@@ -33,55 +21,63 @@ namespace Clustering {
     unsigned int OutOfBoundsEx::getCurrent() const
     {
 
-        return __current;
+        return this->__current;
     }
 
 
     int OutOfBoundsEx::getRhs() const
     {
 
-        return __rhs;
+        return this->__rhs;
     }
 
 
-    std::string OutOfBoundsEx::getName() const
+    string OutOfBoundsEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
 
-    std::ostream &Clustering::operator<<(std::ostream &os, const OutOfBoundsEx &ex)
+    ostream &operator<<(ostream &os, const OutOfBoundsEx &ex)
     {
+        os << "DimensionalityMismatchEx ("
+        << "current = " << ex.__current << ", "
+        << "rhs = " << ex.__rhs << ')';
         return os;
+//        os << ex << endl;
+//        return os;
     }
 
 // ~~~~~~~~~~~ DimensionalityMismatchEx ~~~~~~~~~~~~
 
-
-
     DimensionalityMismatchEx::DimensionalityMismatchEx(unsigned int c, unsigned int r)
     {
-        c = getCurrent();
-        r = getRhs();
+        this->__name = "DimensionalityMismatchEx";
+        this->__current = c;
+        this->__rhs = r;
     }
 
     unsigned int DimensionalityMismatchEx::getCurrent() const
     {
-        return __current;
+
+        return this->__current;
     }
 
     unsigned int DimensionalityMismatchEx::getRhs() const
     {
-        return __rhs;
+
+        return this->__rhs;
     }
 
-    std::string DimensionalityMismatchEx::getName() const
+    string DimensionalityMismatchEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
 
-    std::ostream &Clustering::operator<<(std::ostream &os, const DimensionalityMismatchEx &ex)
+    ostream &operator<<(ostream &os, const DimensionalityMismatchEx &ex)
     {
 
             os << "DimensionalityMismatchEx ("
@@ -95,44 +91,47 @@ namespace Clustering {
 
     ZeroClustersEx::ZeroClustersEx()
     {
-
+        __name = "";
     }
 
-    std::string ZeroClustersEx::getName() const
+    string ZeroClustersEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
 
-
-
-    std::ostream &Clustering::operator<<(std::ostream &os, const ZeroClustersEx &ex)
+    ostream &operator<<(ostream &os, const ZeroClustersEx &ex)
     {
+        os << ex << endl;
         return os;
     }
 
 
 // ~~~~~~~~~~~~ DataFileOpenEx ~~~~~~~~~~~
 
-    DataFileOpenEx::DataFileOpenEx(std::string filename)
+    DataFileOpenEx::DataFileOpenEx(string filename)
     {
-        filename = __filename; //dont know if this is right just made it up
+        this->__filename = filename; //dont know if this is right just made it up
     }
 
 
-    std::string DataFileOpenEx::getFilename() const
+   string DataFileOpenEx::getFilename() const
     {
-        return __filename;
+
+        return this->__filename;
     }
 
 
-    std::string DataFileOpenEx::getName() const
+    string DataFileOpenEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
-    std::ostream &Clustering::operator<<(std::ostream &os, const DataFileOpenEx &ex)
+    ostream &operator<<(ostream &os, const DataFileOpenEx &ex)
     {
+        os << ex << endl;
         return os;
     }
 
@@ -140,17 +139,19 @@ namespace Clustering {
 
     ZeroDimensionsEx::ZeroDimensionsEx()
     {
-
+        __name = "ZeroDimensionsEx";
     }
 
-    std::string ZeroDimensionsEx::getName() const
+    string ZeroDimensionsEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
 
-    std::ostream &Clustering::operator<<(std::ostream &os, const ZeroDimensionsEx &ex)
+    ostream &operator<<(ostream &os, const ZeroDimensionsEx &ex)
     {
+        os << ex.getName() << endl;
         return os;
     }
 
@@ -159,18 +160,21 @@ namespace Clustering {
 
     EmptyClusterEx::EmptyClusterEx()
     {
-
+        __name = "";
     }
 
 
-    std::string EmptyClusterEx::getName() const
+    string EmptyClusterEx::getName() const
     {
-        return __name;
+
+        return this->__name;
     }
 
-
-    std::ostream &Clustering::operator<<(std::ostream &os, const EmptyClusterEx &ex)
+    ostream &operator<<(ostream &os, const EmptyClusterEx &ex)
     {
+        os << ex << endl; 
         return os;
     }
+
+
 }

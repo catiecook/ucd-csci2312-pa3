@@ -2,6 +2,7 @@
 // Created by Catie Cook on 2/17/16.
 //
 #include "Point.h"
+#include "Exceptions.h"
 
 #include <iostream>
 #include <cmath>
@@ -9,7 +10,7 @@
 #include <string>
 #include <iostream>
 
-
+using namespace std;
 namespace Clustering {
 
 
@@ -18,6 +19,8 @@ namespace Clustering {
     //constructors
     Point::Point(unsigned int i)
     {
+
+
         __id = __idGen;
         ++__idGen; // increment IDs  as they are created
 
@@ -28,7 +31,13 @@ namespace Clustering {
         {
             __values[j] = 0;
         }
+
+        if (i == 0)
+        {
+            throw ZeroDimensionsEx();
+        }
     }
+
 
     void Point::rewindIdGen()
     {
@@ -67,10 +76,15 @@ namespace Clustering {
     // OVERLOADED =
     Point &Point::operator=(const Point &p)
     {
-        if (this != &p) {
+        if (__dim != p.__dim)
+        {
+            throw DimensionalityMismatchEx(p.__dim, __dim);
+        }
+
+//         (this != &p) {
+
             __dim = p.__dim;
             __id = p.__id;
-
 
             if (__values != nullptr)
                 delete[] __values;
@@ -83,7 +97,7 @@ namespace Clustering {
 
             }
 
-        }
+
         return *this;
     }
 
@@ -107,84 +121,103 @@ namespace Clustering {
 
     void Point::setValue(unsigned int i, double d)
     {
-        if (i >= 0 && i < __dim)
-        {
-            __values[i] = d;
+        if (i >= __dim) {
+            throw OutOfBoundsEx(__dim, i);
         }
+        __values[i] = d;
+
     }
     double Point::getValue(unsigned int d) const
     {
-        if (d >= 0 && d <__dim)
-            return __values[d];
+        if (d >= __dim)
+        {
+            throw OutOfBoundsEx(__dim, d);
+        }
 
-        else
-            return 0;
+        return __values[d];
+
     }
 
     // **** DISTANCE TO FUNCTION ******
 
     double Point::distanceTo(const Point &point) const
     {
-        if (__dim != point.__dim)
-            return false;
-
-        double sop = 0;
-        for (int i = 0; i < __dim; ++i) {
-            sop += pow(point.getValue(i) - getValue(i), 2);
+        if (point.__dim != __dim)
+        {
+            throw DimensionalityMismatchEx(point.__dim, __dim);
         }
-        return sqrt(sop);
+
+        double sum = 0;
+        double distance = 0;
+
+        for (int i = 0; i < point.__dim; i++)
+        {
+            sum += pow(point.__values[i] - this->__values[i], 2);
+
+        } //The values pointed to in point.
+
+        distance = sqrt(sum);
+
+        return distance;
     }
-//    {
-//        double sum = 0;
-//        double distance = 0;
-//
-//        for (int i = 0; i < point.__dim; i++)
-//        {
-//            sum += pow(point.__values - this->__values, 2);
-//            distance = sqrt(sum);
-//
-//        } //The values pointed to in point.
-//        return distance;
-//    }
 
     // ******** OVERLOADED OPERATORS ******
 
     Point &Point::operator*=(double d)  // p *= 6; p.operator*=(6); //use for or while loop to multiply every point by the double
     {
-        for(int i = 0; i < __dim; ++i)
+
+        for (int i = 0; i < __dim; i++)
         {
-            __values[i] *= d;
+            __values[i] = __values[i] * d;
+
         }
         return *this;
+
     }
 
     Point &Point::operator/=(double d) //use for or while loop to multiply every point by the double
     {
-        for(int i = 0; i < __dim; ++i)
+        //Point point(__dim);
+
+        for (int i = 0; i < __dim; i++)
         {
-            __values[i] /= d;
+            __values[i] = __values[i] / d;
+
         }
-        return *this;
+        return *this; //returns the point
+
     }
 
     const Point Point::operator*(double d) const
     {
-        Point p(*this);
-        p *= d; //p = d*p
+        Point point(__dim);
 
-        return p;
+        for (int i = 0; i < __dim; i++)
+        {
+           point.__values[i] = __values[i] * d;
+
+        }
+        return point;
+
     }
 
     const Point Point::operator/(double d) const
     {
-        Point p(*this);
-        p /= d;
+        Point point(__dim);
 
-        return p;
+        for (int i = 0; i < __dim; i++)
+        {
+            point.__values[i] = __values[i] / d;
+
+        }
+        return point;
+
     }
 
     double &Point::operator[](unsigned int index)
     {
+        if (index >= __dim)
+            throw OutOfBoundsEx(__dim, index);
 
         return __values[index];
     }
@@ -192,6 +225,9 @@ namespace Clustering {
 
     const double &Point::operator[](unsigned int index) const
     {
+        if (index >= __dim)
+            throw OutOfBoundsEx(__dim, index);
+
         return __values[index];
     }
 
@@ -199,17 +235,17 @@ namespace Clustering {
 
     Point &operator+=(Point &point, const Point &point1)
     {
-        int used = std::max(point.getDims(), point1.getDims());
-
-        if (point.__dim < used) {
-            delete [] point.__values;
-
-            point.__values = new double[used];
+        if (point.__dim != point1.__dim)
+        {
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
         }
 
-        for (int i = 0; i < used; ++i)
+
+
+        for (int i = 0; i < point.__dim; i++)
         {
-            point[i] += point1.getValue(i);
+            point.__values[i] += point1.__values[i];
+
         }
 
         return point;
@@ -227,17 +263,17 @@ namespace Clustering {
     Point &operator-=(Point &point, const Point &point1)
 
     {
-        int used = std::max(point.getDims(), point1.getDims());
-
-        if (point.__dim < used) {
-            delete [] point.__values;
-
-            point.__values = new double[used];
+        if (point.__dim != point1.__dim)
+        {
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
         }
 
-        for (int i = 0; i < used; ++i)
+
+
+        for (int i = 0; i < point.__dim; i++)
         {
-            point[i] -= point1.getValue(i);
+            point.__values[i] -= point1.__values[i];
+
         }
 
         return point;
@@ -254,81 +290,151 @@ namespace Clustering {
 
     const Point operator+(const Point &point, const Point &point1) //defined this in class as an example
     {
-        Point point2(point);
-        point2 += point1;
+
+        if (point.__dim != point1.__dim)
+        {
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
+        }
+
+        Point point2(point.__dim);
+
+            for (int i = 0; i < point2.__dim; i++)
+            {
+                point2.__values[i] = point.__values[i] + point1.__values[i];
+
+            }
         return point2;
+
     }
 
     const Point operator-(const Point &point, const Point &point1)
     {
-        Point point2(point);
-        point2 -= point1;
+
+        if (point.__dim != point1.__dim)
+        {
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
+        }
+
+        Point point2(point.__dim);
+
+        for (int i = 0; i < point2.__dim; i++)
+        {
+            point2.__values[i] = point.__values[i] - point1.__values[i];
+
+        }
         return point2;
+
     }
 
     bool operator==(const Point &point, const Point &point1)
     {
-        if (point.__id == point1.__id)
+        if (point.__dim != point1.__dim)
         {
-            return true; //if stuff matches return true
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
         }
 
-        for (int i = 0; i < std::max(point.__dim, point1.__dim) //checking if anything doesn't match
+        if (point.__dim != point1.__dim)
         {
-            if (point.getValue(i) != point1.getValue(i))
-                return false;
+            return false;
         }
 
-        //IDs dont match, return false
-        return false;
+        else
+        {
+            for ( int i = 0; i < point.__dim; i++)
+            {
+                if (point.__values[i] != point1.__values[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        return true; //if values match return true
+
     }
 
     bool operator!=(const Point & point, const Point & point1)
 
     {
-        if (point != point1)
+
+        if (point.__dim != point1.__dim)
         {
             return true;
         }
 
         else
+        {
+            for ( int i = 0; i < point.__dim; i++)
+            {
+                if (point.__values[i] != point1.__values[i])
+                    return true;
+            }
+
             return false;
+        }
     }
 
     bool operator>(const Point & point, const Point & point1)
     {
 
-        if(point > point1)
+        if (point.__dim != point1.__dim)
         {
-            return point > point1;
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
         }
+
         else
+        {
+            for ( int i = 0; i < point.__dim; i++)
+            {
+                if (point.__values[i] > point1.__values[i])
+                    return true;
+
+                else if (point.__values[i] < point1.__values[i])
+                {
+                    return false;
+                }
+            }
+
             return false;
+        }
     }
 
     bool operator<(const Point &point, const Point &point1)
     {
-        //Point point(), point1();
-
-        if(point < point1)
+        if (point.__dim != point1.__dim)
         {
-            return point < point1;
+            throw DimensionalityMismatchEx(point.__dim, point1.__dim);
         }
+
         else
+        {
+            for ( int i = 0; i < point.__dim; i++)
+            {
+                if (point.__values[i] < point1.__values[i])
+                    return true;
+
+                else if (point.__values[i] > point1.__values[i])
+                {
+                    return false;
+                }
+            }
+
             return false;
+        }
+
     }
 
     bool operator<=(const Point &point, const Point &point1)
     {
-        return !(point < point1);
+        return !(point > point1);
     }
 
     bool operator>=(const Point &point, const Point &point1)
     {
-        return  !(point > point1);
+        return  !(point < point1);
 
     }
-    std::ostream &operator<<(std::ostream &out, const Point &point) //module 3 lesson 11
+    ostream &operator<<(ostream &out, const Point &point) //module 3 lesson 11
     {
 
         int i = 0;
@@ -338,43 +444,30 @@ namespace Clustering {
         }
         out << point.__values[i];
 
-        //return out;
+        return out;
     }
 
 
-    std::istream &operator>>(std::istream &is, Point &point) // find code for this in lesson 11.
+    istream &operator>>(istream &is, Point &point) // find code for this in lesson 11.
     {
 
-        std::string line;
+        string line;
 
-        std::getline(is, line);
-       // int length = std::count(line.begin(), line.end(), ',') + 1;
+        int count = 0;
         static const char POINT_VALUE_DELIM = ',';
 
-        std::stringstream ss(line);
-        int i = 0;
-
-        if (point.getDims() != length) {
-            delete[] point.__values;
-
-            point.__dim = length;
-            point.__values = new double[point.__dim];
-        }
-
-        while (getline(in, line)) //while there are lines to read
+        while (getline(is, line, ','))
         {
-            std::string vals;
-            getline(ss, vals, ',');
-
-            std::stringstream valstream(vals);
-
-            valstream >> point.__values[i];
-
-            ++i;
+           point.__values[count] = stod(line);
+            count++;
         }
 
+        if (point.__dim != count)
+        {
+            throw DimensionalityMismatchEx(point.__dim, count);
+        }
 
-        return in;
+        return is;
     }
 
 

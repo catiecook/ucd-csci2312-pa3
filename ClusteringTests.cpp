@@ -1745,6 +1745,7 @@ void test_cluster_equality(ErrorContext &ec, unsigned int numRuns) { // TODO add
 
         {
             Cluster c1(100), c2(120);
+
             c1.add(Point(100));
 
             pass = true;
