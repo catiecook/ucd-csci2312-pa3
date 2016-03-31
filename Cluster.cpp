@@ -597,11 +597,11 @@ namespace Clustering {
 //// out << cluster[i] << " " << POINT_CLUSTER_ID_DELIM << " " << cluster.__id;
 //
 //        return out;
-
-        for (int i = 0; i < c.getSize(); ++i)
-        {
-            out << c[i];
-        }
+//
+//        for (int i = 0; i < c.getSize(); ++i)
+//        {
+//            out << c[i];
+//        }
         return out;
     }
 
@@ -609,24 +609,24 @@ namespace Clustering {
     istream &operator>>(istream &in, Cluster &c)
     {
 
-        string line;
-
-        int count = 0;
-
-        static const char POINT_CLUSTER_ID_DELIM = ',';
-
-//        while (getline(in, line, ','))
+//        string line;
+//
+//        int count = 0;
+//
+//        static const char POINT_CLUSTER_ID_DELIM = ',';
+//
+////        while (getline(in, line, ','))
+////        {
+////            c[count] =stod(line);
+////            count++;
+////        }
+//
+//        if (c.__dimensionality != count)
 //        {
-//            c[count] =stod(line);
-//            count++;
+//            throw DimensionalityMismatchEx(c.__dimensionality, count);
 //        }
-
-        if (c.__dimensionality != count)
-        {
-            throw DimensionalityMismatchEx(c.__dimensionality, count);
-        }
-
-        return in;
+//
+//        return in;
 
     }
 
