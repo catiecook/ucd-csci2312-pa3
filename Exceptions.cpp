@@ -45,8 +45,6 @@ namespace Clustering {
         << "current = " << ex.__current << ", "
         << "rhs = " << ex.__rhs << ')';
         return os;
-//        os << ex << endl;
-//        return os;
     }
 
 // ~~~~~~~~~~~ DimensionalityMismatchEx ~~~~~~~~~~~~
@@ -112,6 +110,9 @@ namespace Clustering {
 
     DataFileOpenEx::DataFileOpenEx(string filename)
     {
+        __filename = filename;
+        __name = "DataFileOpenEx";
+
         this->__filename = filename; //dont know if this is right just made it up
     }
 
@@ -131,8 +132,7 @@ namespace Clustering {
 
     ostream &operator<<(ostream &os, const DataFileOpenEx &ex)
     {
-        os << ex << endl;
-        return os;
+        os << ex.__name << ": " << ex.__filename << endl;
     }
 
 // ~~~~~~~~~~ ZeroDimensionsEx ~~~~~~~~~~~
@@ -160,7 +160,7 @@ namespace Clustering {
 
     EmptyClusterEx::EmptyClusterEx()
     {
-        __name = "";
+        __name = "EmptyClusterEx";
     }
 
 
@@ -172,7 +172,9 @@ namespace Clustering {
 
     ostream &operator<<(ostream &os, const EmptyClusterEx &ex)
     {
-        os << ex << endl; 
+
+
+        os << ex.__name << endl; 
         return os;
     }
 
